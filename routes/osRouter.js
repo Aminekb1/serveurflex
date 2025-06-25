@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-const os = require("os");
+//const os = require("os");
 const osController = require("../Controllers/osController")
 
 /* GET users listing. */

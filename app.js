@@ -5,7 +5,12 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const http =require("http")
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var usersRouter = require('./routes/usersRouter');
+var osRouter = require("./routes/osRouter");
+
+/*const cors = require("cors");
+const session = require("express-session"); //session */
+
 const { connectToMongoDB } = require("./db/db");
 require("dotenv").config(); // configuration .env
 var app = express();
@@ -20,7 +25,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use("/os", osRouter);
 
+//const osController = require(" .. /Controllers/osController")
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));

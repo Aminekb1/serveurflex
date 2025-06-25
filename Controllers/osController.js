@@ -1,13 +1,13 @@
 const os = require("os");
 
-// module.exports.esmfonction = async (req, res) => {
-//   try {
+module.exports.esmfonction = async (req, res) => {
+  try {
 //mahma ken logique
-//     res.status(200).json("");
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
+    res.status(200).json("");
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 module.exports.getOsInformatin = async (req, res) => {
   try {

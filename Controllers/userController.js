@@ -1,179 +1,177 @@
-const userModel = require('../models/userModel')
-const bcrypt = require("bcrypt")
+const userModel = require("../models/userModel")
+
+const bcrypt = require("bcrypt");
+
+
 module.exports.getAllUsers = async (req,res)=>{
     try {
-        
-        const userList = await userModel.find()
+        const userList = await userModel.find({age:{$lt:20}}).sort({createdAt:-1}).limit(3)
+        //const userList = await userModel.find().sort("age")
+
+        if(userList.length == 0){
+            throw new Error("Users not found");            
+        }
 
         res.status(200).json(userList)
     } catch (error) {
-        res.status(500).json(error.message)
-    }
-}
-
-module.exports.addClient = async (req,res)=>{
-    try {
-        
-        const {nom, prenom,email,password,age}=req.body
-
-        const role = "client"
-
-        const newUser = new userModel({
-            nom, prenom,email,password,age,role
-        })
-
-        const useradded = await newUser.save()
-
-        res.status(200).json(useradded)
-    } catch (error) {
-        res.status(500).json(error.message)
-    }
-}
-
-module.exports.addAdmin = async (req,res)=>{
-    try {
-        
-        const {email,password}=req.body
-
-        const role = "admin"
-
-        const newUser = new userModel({
-            email,password,role
-        })
-
-        const useradded = await newUser.save()
-
-        res.status(200).json(useradded)
-    } catch (error) {
-        res.status(500).json(error.message)
-    }
-}
-
-module.exports.deletUserById = async (req,res)=>{
-    try {
-        const {id}=req.params
-        await userModel.findByIdAndDelete(id)
-
-        res.status(200).json("deleted")
-    } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({message : error.message})
     }
 }
 
 module.exports.getUserById = async (req,res)=>{
     try {
-        const {id}=req.params
-        const user = await userModel.findById(id).populate("cars").populate("hotels")
+        const {id} = req.params
+        const user = await userModel.findById(id)
+        
+        if(! user){
+            throw new Error("User not found");            
+        }
 
         res.status(200).json(user)
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({message : error.message})
     }
 }
 
-module.exports.getDataUserConnect = async (req,res)=>{
+module.exports.deleteUserById = async (req,res)=>{
     try {
-        const id=req.user._id //user connecte
-        const user = await userModel.findById(id).populate("cars").populate("hotels")
+        const {id} = req.params
+        const user = await userModel.findByIdAndDelete(id)
+        
+        if(! user){
+            throw new Error("User not found");            
+        }
+
+        res.status(200).json("deleted")
+    } catch (error) {
+        res.status(500).json({message : error.message})
+    }
+}
+
+
+module.exports.getUserByEmail = async (req,res)=>{
+    try {
+        const {email} = req.body
+        const user = await userModel.find({email:email })
+        
+        if(! user){
+            throw new Error("User not found");            
+        }
 
         res.status(200).json(user)
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({message : error.message})
     }
 }
 
-module.exports.updatePassword = async (req,res)=>{
+
+module.exports.addClient = async (req,res)=>{
     try {
-        const {id}=req.params
-        const {password}=req.body
-        
-        const salt = await bcrypt.genSalt()
-        const hashPassword = await bcrypt.hash(password,salt)
-        
-        const user = await userModel.findByIdAndUpdate(id,{
-            $set: {password : hashPassword}
+        //const {name , email , password} = req.body()
+        const {name , email , password} = req.body
+        //console.log("password:",password)
+        const roleClient = "client"
+        const user = new userModel({
+            name , email , password , role : roleClient
         })
-
-        res.status(200).json(user)
+        const userAdded = await user.save()
+        res.status(200).json(userAdded)
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({message : error.message})
+    }
+}
+
+module.exports.addAdmin = async (req,res)=>{
+    try {
+        const {name , email , password} = req.body
+        const roleClient = "admin"
+        const user = new userModel({
+            name , email , password , role : roleClient
+        })
+        const userAdded = await user.save()
+        res.status(200).json(userAdded)
+    } catch (error) {
+        res.status(500).json({message : error.message})
     }
 }
 
 module.exports.updateUser = async (req,res)=>{
     try {
-        const {id}=req.params
-        const {nom,prenom,age}=req.body
-        
-        await userModel.findByIdAndUpdate(id,{
-            $set: {nom,prenom,age}
-        })
+        const {id} = req.params
+        const {age , name} = req.body
+        const user = await userModel.findById(id)        
+        if(! user){
+            throw new Error("User not found");            
+        }
 
-        const user = await userModel.findById(id)
+        const updated = await userModel.findByIdAndUpdate(
+            id,
+            {
+                $set : {name,age}
+            }
+        )
 
-        res.status(200).json(user)
+        res.status(200).json(updated)
     } catch (error) {
-        res.status(500).json(error.message)
+        res.status(500).json({message : error.message})
     }
 }
 
-module.exports.addUserWithImage = async (req, res) => {
+module.exports.updatePassword = async (req,res)=>{
     try {
-      const userData = {
-        ...req.body,
-      };
-      if (req.file ) {
-        const { filename } = req.file;
-        console.log(filename);
-        userData.user_image = filename;
-      }
-      const user = new userModel(userData);
-      const addedusers = await user.save();
-  
-      res.status(200).json({ addedusers });
+        const {id} = req.params
+        const {newPassword} = req.body
+        const user = await userModel.findById(id)        
+        if(! user){
+            throw new Error("User not found");            
+        }
+
+
+        const salt = await bcrypt.genSalt();
+
+        const isSamePassword = await bcrypt.compare(newPassword,user.password)
+
+    
+        const newPasswordhashed = await bcrypt.hash(newPassword,salt); 
+        /*const confirm = await bcrypt.compare(passwordhashed, user.password)
+
+        if (!confirm) {
+            throw new Error("probleme same password");}*/
+
+        if(isSamePassword){
+            throw new Error("probleme same password");            
+        }
+
+        const updated = await userModel.findByIdAndUpdate(
+            id,
+            {
+                $set : {password : newPasswordhashed}
+            }
+        )
+
+        res.status(200).json(updated)
     } catch (error) {
-      res.status(500).json({ message: error.message });
+        res.status(500).json({message : error.message})
     }
-  };
-  const jwt = require("jsonwebtoken")
+}
 
-  const createToken=(id) => {
-    return jwt.sign({id},'net 9antra25 secret',{expiresIn : '1m'})
-  }
-
-  
-
-  module.exports.login = async (req,res)=>{
+module.exports.addClientWithImg = async (req,res)=>{
     try {
-        const { email , password} = req.body
-        
-        const user = await userModel.login(email,password)
-        const connecte = true
-        await userModel.findByIdAndUpdate(user._id,{
-            $set: {connecte}
-        })
-        const token = createToken(user._id)
-        res.cookie('jwt_token',token,{httpOnly:true,maxAge:60*1000})
-        res.status(200).json({message :"connected",user : user})
+        const UserData = { ...req.body ,}
+
+
+        UserData.role = "client"
+
+        if(req.file){
+            const {filename} = req.file;
+            UserData.image_User = filename
+        }
+        const user = new userModel(
+            UserData
+        )
+        const userAdded = await user.save()
+        res.status(200).json(userAdded)
     } catch (error) {
-        res.status(500).json({message:error.message} )
+        res.status(500).json({message : error.message})
     }
-  }
-
-
-
-  module.exports.logout = async (req,res)=>{
-    try {
-        const id = req.user_id 
-        
-        const connecte = false
-        await userModel.findByIdAndUpdate(id,{
-            $set: {connecte}
-        })
-        
-        res.cookie("jwt_token","",{httpOnly:false,maxAge:1})
-        res.status(200).json("User successfully logged out")
-    } catch (error) {
-        res.status(500).json({message:error.message} )
-    }
-  }
+}
