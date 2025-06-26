@@ -6,7 +6,14 @@ var logger = require('morgan');
 const http =require("http")
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/usersRouter');
+//var ressourceRoute = require('./routes/ressourceRoute');
+const ressourceRoute = require('./routes/ressourceRoute');
 var osRouter = require("./routes/osRouter");
+//var commandeRouter = require('./routes/commandeRoute');
+//var factureRoute = require('./routes/factureRoute');
+//var panierRoute = require('./routes/panierRoute');
+//var catalogueRoute = require('./routes/catalogueRoute');
+//var notificationRoute = require('./routes/notificationRoute');
 
 /*const cors = require("cors");
 const session = require("express-session"); //session */
@@ -26,6 +33,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use("/os", osRouter);
+app.use('/ressource', ressourceRoute);
+//app.use('/commandes', commandeRouter);
+//app.use('/factures', factureRoute);
+//app.use('/paniers', panierRoute);
+//app.use('/catalogues', catalogueRoute);
+
+//app.use('/notifications', notificationRoute);
 
 //const osController = require(" .. /Controllers/osController")
 // catch 404 and forward to error handler

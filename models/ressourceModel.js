@@ -1,14 +1,17 @@
 const mongoose = require('mongoose');
 
 const ressourceSchema = new mongoose.Schema({
-  id: { type: String, require: true, unique: true },
-  cpu: { type: String, require: true },
-  type: { type: String, require: true },
-  ram: { type: String, require: true },
-  stockage: { type: String, require: true },
-  nombreHeure: { type: Number, require: true },
-  disponibilite: { type: Boolean, require: true },
-  statut: { type: String, enum: ['En cours', 'Prêt', 'Arrêté'], require: true },
+ id: { type: String, required: true, unique: true },
+//id: { type: String, required: true },
+  
+  nom: { type: String, required: true },
+  cpu: { type: String, required: true },
+  //type: { type: String, required: true },
+  ram: { type: String, required: true },
+  stockage: { type: String, required: true },
+  nombreHeure: { type: Number, required: true },
+  disponibilite: { type: Boolean, required: true },
+  statut: { type: String, enum: ['En cours', 'Prêt', 'Arrêté'], required: true },
   typeRessource: { type: String,enum: ['server', 'vm'], require: true }, // Discriminator key
   commandes: [{type: mongoose.Schema.Types.ObjectId, ref:"Commande" }] // Many 
 });

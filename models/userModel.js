@@ -9,28 +9,46 @@ const userSchema = new mongoose.Schema(
       type: String,
       require: true,
       unique:true,
+      lowercase: true,
+      match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
     },
     password: {
       type: String,
       require: true,
-    
+      minLength: 8,  
 
-      /*validate: {
+     /* validate: {
       validator: function (value) {
-         return /^( ?=. "[a-z])( ?=. "[A-Z])( ?=. "\d)( ?=.* [\W_]).{8,}$/.test(value); 
-      },
+         return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)( ?=.*[\W_]).{8,}$/.test(value); 
+      }, */
+    /*  validate: {
+      validator: v => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(v),
       message:
-        "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un caractere special" },*/
+        "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un caractere special.", 
+      }, */
+          match: [
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+        "Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.",
+      ],
     },
    // role: { type: String, enum: ["client", "admin", "moderateur"] },
     role: { type: String, enum: ["client", "admin"] },
     age: Number,
     etat: Boolean,
     image_User: { type: String, default: "client.png" },
+
+    //admin
+    //client
+
         //Rleation
- //   Notification: [{type: mongoose.Schema.Types.ObjectId, ref:"Notif" }], // Many 
-    cars: [{type: mongoose.Schema.Types.ObjectId, ref:"Car" }] // Many 
+    notifications: [{type: mongoose.Schema.Types.ObjectId, ref:"Notif" }], // Many 
+   // cars: [{type: mongoose.Schema.Types.ObjectId, ref:"Car" }] // Many 
     //car: {type: mongoose.Schema.Types.ObjectId, ref:"Car" } // one 
+    
+    panier: {type: mongoose.Schema.Types.ObjectId, ref:"Panier" }, // one 
+    commandes: [{type: mongoose.Schema.Types.ObjectId, ref:"Commande" }] ,// Many 
+    catalogue: {type: mongoose.Schema.Types.ObjectId, ref:"Catalogue" }, // one 
+    recommendationSystem: {type: mongoose.Schema.Types.ObjectId, ref:"RecommendationSystem" }, // one 
   },
   { timestamps: true }
 );

@@ -1,12 +1,14 @@
 const userModel = require("../models/userModel")
+const commandeModel = require('../models/commandeModel');
+const panierModel = require("../models/panierModel");
 
 const bcrypt = require("bcrypt");
 
 
 module.exports.getAllUsers = async (req,res)=>{
     try {
-        const userList = await userModel.find({age:{$lt:20}}).sort({createdAt:-1}).limit(3)
-        //const userList = await userModel.find().sort("age")
+        //const userList = await userModel.find({age:{$lt:20}}).sort({createdAt:-1}).limit(3).populate("Notifications")
+        const userList = await userModel.find().sort("age")
 
         if(userList.length == 0){
             throw new Error("Users not found");            
@@ -84,9 +86,12 @@ module.exports.addClient = async (req,res)=>{
 module.exports.addAdmin = async (req,res)=>{
     try {
         const {name , email , password} = req.body
-        const roleClient = "admin"
+        //const roleClient = "admin"
+        const role = "admin"
+
         const user = new userModel({
-            name , email , password , role : roleClient
+            name , email , password , role
+           // name , email , password , role : roleClient
         })
         const userAdded = await user.save()
         res.status(200).json(userAdded)
@@ -133,9 +138,12 @@ module.exports.updatePassword = async (req,res)=>{
 
     
         const newPasswordhashed = await bcrypt.hash(newPassword,salt); 
+        
         /*const confirm = await bcrypt.compare(passwordhashed, user.password)
-
-        if (!confirm) {
+           console.log(passwordhashed)
+           console.log(user.password
+        console. log(confirm)
+        if (confirm) {
             throw new Error("probleme same password");}*/
 
         if(isSamePassword){
@@ -175,3 +183,19 @@ module.exports.addClientWithImg = async (req,res)=>{
         res.status(500).json({message : error.message})
     }
 }
+
+module.exports.addToPanier = async (req, res) => {
+  try {
+    const { userId, ressourceId } = req.body;
+    const user = await userModel.findById(userId);
+    if (!user || user.role !== "client") {
+      throw new Error("Only clients can add to panier");
+    }
+    const panier = await panierModel.findOne({ client: userId }) || new panierModel({ client: userId, ressources: [] });
+    panier.ressources.push(ressourceId);
+    await panier.save();
+    res.status(201).json(panier);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
