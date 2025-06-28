@@ -28,8 +28,8 @@ module.exports.addRessource = async (req, res) => {
 
 module.exports.updateRessource = async (req,res)=>{
     try {
-        const { nom, cpu, typeRessource, ram, stockage, nombreHeure, disponibilite, statut } = req.body;
-    const ressourceModel = new Ressource({ nom, cpu, typeRessource, ram, stockage, nombreHeure, disponibilite, statut });
+        const { id, nom, cpu, typeRessource, ram, stockage, nombreHeure, disponibilite, statut } = req.body;
+    const ressourceModel = new Ressource({ id, nom, cpu, typeRessource, ram, stockage, nombreHeure, disponibilite, statut });
     await ressourceModel.save();     
         if(! user){
             throw new Error("User not found");            

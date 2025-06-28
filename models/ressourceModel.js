@@ -12,7 +12,7 @@ const ressourceSchema = new mongoose.Schema({
   nombreHeure: { type: Number, required: true },
   disponibilite: { type: Boolean, required: true },
   statut: { type: String, enum: ['En cours', 'Prêt', 'Arrêté'], required: true },
-  typeRessource: { type: String,enum: ['server', 'vm'], require: true }, // Discriminator key
+  typeRessource: { type: String,enum: ['server', 'vm'], required: true }, // Discriminator key
   commandes: [{type: mongoose.Schema.Types.ObjectId, ref:"Commande" }] // Many 
 });
 

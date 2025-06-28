@@ -7,14 +7,14 @@ const userSchema = new mongoose.Schema(
     name: String,
     email: {
       type: String,
-      require: true,
+      required: true,
       unique:true,
       lowercase: true,
       match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
     },
     password: {
       type: String,
-      require: true,
+      required: true,
       minLength: 8,  
 
      /* validate: {
@@ -26,10 +26,16 @@ const userSchema = new mongoose.Schema(
       message:
         "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un caractere special.", 
       }, */
-          match: [
+       /*   match: [
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
         "Le mot de passe doit contenir au moins 8 caractères, une lettre majuscule, une lettre minuscule, un chiffre et un caractère spécial.",
-      ],
+      ],*/
+      validate: {
+        validator: v =>
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[ !@#$%^&*()_\-+=\[{\]};:'",<.>/?\\|`~]).{8,}$/.test(v),
+        message:
+          'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole autorisé.',
+      }
     },
    // role: { type: String, enum: ["client", "admin", "moderateur"] },
     role: { type: String, enum: ["client", "admin"] },
@@ -41,7 +47,7 @@ const userSchema = new mongoose.Schema(
     //client
 
         //Rleation
-    notifications: [{type: mongoose.Schema.Types.ObjectId, ref:"Notif" }], // Many 
+    notifications: [{type: mongoose.Schema.Types.ObjectId, ref:"Notification" }], // Many 
    // cars: [{type: mongoose.Schema.Types.ObjectId, ref:"Car" }] // Many 
     //car: {type: mongoose.Schema.Types.ObjectId, ref:"Car" } // one 
     

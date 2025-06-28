@@ -9,12 +9,12 @@ var usersRouter = require('./routes/usersRouter');
 //var ressourceRoute = require('./routes/ressourceRoute');
 const ressourceRoute = require('./routes/ressourceRoute');
 var osRouter = require("./routes/osRouter");
-//var commandeRouter = require('./routes/commandeRoute');
-//var factureRoute = require('./routes/factureRoute');
+var commandeRouter = require('./routes/commandeRouter');
+var factureRoute = require('./routes/factureRouter');
 //var panierRoute = require('./routes/panierRoute');
 //var catalogueRoute = require('./routes/catalogueRoute');
-//var notificationRoute = require('./routes/notificationRoute');
-
+var notificationRoute = require('./routes/notificationRoute');
+var statsRoute = require('./routes/statsRoute');
 /*const cors = require("cors");
 const session = require("express-session"); //session */
 
@@ -34,12 +34,13 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use("/os", osRouter);
 app.use('/ressource', ressourceRoute);
-//app.use('/commandes', commandeRouter);
-//app.use('/factures', factureRoute);
+app.use('/commandes', commandeRouter);
+app.use('/factures', factureRoute);
+app.use('/stats', statsRoute);
 //app.use('/paniers', panierRoute);
 //app.use('/catalogues', catalogueRoute);
 
-//app.use('/notifications', notificationRoute);
+app.use('/notifications', notificationRoute);
 
 //const osController = require(" .. /Controllers/osController")
 // catch 404 and forward to error handler
