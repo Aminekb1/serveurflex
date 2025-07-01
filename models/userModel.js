@@ -5,6 +5,11 @@ const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema(
   {
     name: String,
+     /* name: {
+        type: String,
+        required: [true, 'Name is required'],
+        maxlength: [50, 'Names are limited to 50 characters'],
+        minlength: [1, 'Invalid name'] }, */
     email: {
       type: String,
       required: true,
@@ -75,6 +80,20 @@ userSchema.pre("save", async function (next) {
     next(error);
   }
 });
+
+userSchema.statics.login = async function (email, password) {
+  const user = await this.findOne({ email });
+  if (user) {
+    const auth = await bcrypt.compare(password, user.password);
+    if (auth) {
+      return user;
+    } else {
+      throw new Error("incorrect password");
+    }
+  } else {
+    throw new Error("incorrect email");
+  }
+};
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;

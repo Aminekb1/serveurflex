@@ -85,7 +85,7 @@ module.exports = {
    * et demande à l'utilisateur de répondre OUI/NON pour valider.
    * Body attendu : { userId, resourceName, method: 'email'|'sms'|'both' }
    */
-/*   sendConfirmation: async (req, res) => {
+   sendConfirmation: async (req, res) => {
     try {
       const { userId, resourceName, method } = req.body;
       const user = await userModel.findById(userId);
@@ -153,5 +153,5 @@ module.exports = {
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  } */
+  } 
 };
